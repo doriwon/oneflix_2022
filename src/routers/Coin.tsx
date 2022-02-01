@@ -1,5 +1,5 @@
 import { useLocation, useParams } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -33,16 +33,30 @@ interface RouteState {
 }
 
 function Coin() {
-  const { coinId } = useParams<RouteParams>();
   const [loading, setLoading] = useState(true);
+  const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
+  const [info, setInfo] = useState({});
+  const [priceInfo, setPriceInfo] = useState({});
+  useEffect(() => {
+    (async () => {
+      const infoData = await (
+        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+      ).json();
+      const priceData = await (
+        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+      ).json();
+      setInfo(infoData);
+      setPriceInfo(priceData);
+      setLoading(false);
+    })();
+  }, []);
   return (
     <Container>
       <Header>
         <Title>{state?.name || "Loading"}</Title>
-        {/* 상세페이지로 바로 유입될 씨 로딩 문구 노출 (전 페이지에서 name이란 state를 못가져왔으니) */}
       </Header>
-      {loading ? <Loader>Loading...</Loader> : null}{" "}
+      {loading ? <Loader>Loading...</Loader> : <span></span>}
     </Container>
   );
 }
