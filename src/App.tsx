@@ -33,7 +33,7 @@ const GlobalStyle = createGlobalStyle`
       display: none;
   }
   body {
-    line-height: 1;
+    line-height: 1.2;
     font-family: 'Source Sans Pro', sans-serif;
     background-color: ${(props) => props.theme.backgroundColor};
     color: ${(props) => props.theme.textColor};
