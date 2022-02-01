@@ -28,8 +28,9 @@ const Coin = styled.li`
   border-radius: 15px;
   color: ${(props) => props.theme.backgroundColor};
   a {
-    display: block;
-    padding: 20px;
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
     transition: color 0.2s ease-in;
   }
   &:hover {
@@ -42,6 +43,12 @@ const Coin = styled.li`
 const Loader = styled.span`
   display: block;
   text-align: center;
+`;
+
+const Img = styled.img`
+  width: 30px;
+  height: 30px;
+  margin-right: 15px;
 `;
 
 interface CoinInterface {
@@ -76,7 +83,17 @@ function Coins() {
         <CoinsList>
           {coins.map((coin) => (
             <Coin key={coin.id}>
-              <Link to={`/${coin.id}`}>{coin.name} &rarr; </Link>
+              <Link
+                to={{
+                  pathname: `/${coin.id}`,
+                  state: { name: coin.name }, //해당 페이지로 name 이란 정보 state로 전송
+                }}
+              >
+                <Img
+                  src={`https://cryptoicon-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+                />
+                {coin.name} &rarr;{" "}
+              </Link>
             </Coin>
           ))}
         </CoinsList>
