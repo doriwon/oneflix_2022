@@ -5,13 +5,13 @@ import {
   useParams,
   useRouteMatch,
 } from "react-router";
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Chart from "./Chart";
 import Price from "./Price";
 import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import { fetchCoinInfo, fetchCoinPrice } from "../api";
+import { Helmet } from "react-helmet";
 
 const Container = styled.div`
   padding: 0 20px;
@@ -165,11 +165,17 @@ function Coin() {
   ); //url에서 값을 받아서 api에게 넘겨주는 역할
   const { isLoading: priceLoading, data: priceData } = useQuery<PriceData>(
     ["price", coinId],
-    () => fetchCoinPrice(coinId)
+    () => fetchCoinPrice(coinId),
+    { refetchInterval: 5000 } // refetch interval 설정 가능
   );
   const loading = infoLoading || priceLoading; //두개의 로딩이 모두 충족됐을때
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading" : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading" : infoData?.name}
@@ -189,8 +195,8 @@ function Coin() {
               <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              <span>Price:</span>
+              <span>{priceData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
