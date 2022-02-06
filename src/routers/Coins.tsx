@@ -25,10 +25,11 @@ const Title = styled.h1`
 const CoinsList = styled.ul``;
 
 const Coin = styled.li`
-  background-color: whitesmoke;
+  background-color: ${(props) => props.theme.cardBgColor};
   margin-bottom: 10px;
   border-radius: 15px;
-  color: ${(props) => props.theme.backgroundColor};
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: ${(props) => props.theme.textColor};
   a {
     display: flex;
     align-items: center;
@@ -63,7 +64,10 @@ interface ICoin {
   type: string;
 }
 
-function Coins() {
+interface ICoinsProps {
+  toggleDark: () => void;
+}
+function Coins({ toggleDark }: ICoinsProps) {
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
   return (
     <Container>
@@ -72,6 +76,7 @@ function Coins() {
       </Helmet>
       <Header>
         <Title>COIN</Title>
+        <button onClick={toggleDark}>Toggle Mode</button>
       </Header>
       {isLoading ? (
         <Loader>Loading...</Loader>
