@@ -62,13 +62,13 @@ table {
 body {
   font-weight: 300;
   font-family: 'Source Sans Pro', sans-serif;
-  background-color:${(props) => props.theme.bgColor};
-  color:black;
+  background-color: ${(props) => props.theme.bgColor};
+  color: black;
   line-height: 1.2;
 }
 a {
-  text-decoration:none;
-  color:inherit;
+  text-decoration: none;
+  color: inherit;
 }
 `;
 
