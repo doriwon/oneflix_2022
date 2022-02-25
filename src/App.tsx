@@ -1,6 +1,13 @@
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "react-beautiful-dnd";
+import { useRecoilState } from "recoil";
 
 import styled from "styled-components";
+import { toDoState } from "./atoms";
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,10 +40,27 @@ const Card = styled.div`
   background-color: ${(props) => props.theme.cardColor};
 `;
 
-const toDos = ["a", "b", "c", "d", "e", "f"];
-
 function App() {
-  const onDragEnd = () => {};
+  const [toDos, setToDos] = useRecoilState(toDoState);
+  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+    if (!destination) return; //같은 자리에 둘 경우
+
+    setToDos((oldToDos) => {
+      const toDosCopy = [...oldToDos];
+      // 1) source.index에서 아이템 삭제하기
+      console.log("Delete item on", source.index);
+      console.log(toDosCopy);
+      toDosCopy.splice(source.index, 1);
+      console.log("Deleted item");
+      console.log(toDosCopy);
+      // 2) destination.index로 아이템 다시 돌려주기
+      console.log("Put back", draggableId, "on ", destination.index);
+      toDosCopy.splice(destination?.index, 0, draggableId); // destination?.index 자리에, 아무것도 지우지 않고, draggableId 추가
+      console.log(toDosCopy);
+
+      return toDosCopy;
+    });
+  };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Wrapper>
@@ -45,7 +69,8 @@ function App() {
             {(magic) => (
               <Board ref={magic.innerRef} {...magic.droppableProps}>
                 {toDos.map((toDo, index) => (
-                  <Draggable draggableId={toDo} index={index}>
+                  <Draggable key={toDo} draggableId={toDo} index={index}>
+                    {/* draggableId 와 key의 값이 같아야 함 */}
                     {(magic) => (
                       <Card
                         ref={magic.innerRef}
@@ -58,7 +83,6 @@ function App() {
                   </Draggable>
                 ))}
                 {magic.placeholder}
-                {/* 이동 시 리스트의 사이즈가 바뀌지않게 하기위해서 추가 */}
               </Board>
             )}
           </Droppable>
