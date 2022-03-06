@@ -6,8 +6,7 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
   display: flex;
-  max-width: 630px;
-  width: 100%;
+  width: 100vw;
   margin: 0 auto;
   justify-content: center;
   align-items: center;
@@ -15,26 +14,30 @@ const Wrapper = styled.div`
 `;
 
 const Boards = styled.div`
-  display: grid;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   width: 100%;
   gap: 10px;
-  grid-template-columns: repeat(3, 1fr);
 `;
 
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState);
-  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
-    if (!destination) return; //같은 자리에 둘 경우
+  const onDragEnd = (info: DropResult) => {
+    const { draggableId, destination, source } = info;
+    if (destination?.droppableId === source.droppableId) {
+      //같은 보드에서 이동
+      setToDos((allBoards) => {
+        const boardCopy = [...allBoards[source.droppableId]]; //source.droppableId("To Do", Doing, Done) 로부터 array 복사
+        boardCopy.splice(source.index, 1);
+        boardCopy.splice(destination?.index, 0, draggableId);
 
-    /*setToDos((oldToDos) => {
-      const toDosCopy = [...oldToDos];
-      // 1) source.index에서 아이템 삭제하기
-      toDosCopy.splice(source.index, 1);
-      // 2) destination.index로 아이템 다시 돌려주기
-      toDosCopy.splice(destination?.index, 0, draggableId);
-
-      return toDosCopy;
-    });*/
+        return {
+          ...allBoards, // 수정되지 않는 다른 board 가져오기
+          [source.droppableId]: boardCopy, //수정된 board
+        }; //object
+      });
+    }
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
