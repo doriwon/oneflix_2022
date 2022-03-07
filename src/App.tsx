@@ -26,7 +26,6 @@ function App() {
   const onDragEnd = (info: DropResult) => {
     const { draggableId, destination, source } = info;
     if (!destination) return;
-    console.log(info);
     if (destination?.droppableId === source.droppableId) {
       //같은 보드에서 이동
       setToDos((allBoards) => {
