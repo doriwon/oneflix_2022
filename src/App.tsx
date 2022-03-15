@@ -30,8 +30,9 @@ function App() {
       //같은 보드에서 이동
       setToDos((allBoards) => {
         const boardCopy = [...allBoards[source.droppableId]]; //source.droppableId("To Do", Doing, Done) 로부터 array 복사
+        const taskObj = boardCopy[source.index];
         boardCopy.splice(source.index, 1);
-        boardCopy.splice(destination?.index, 0, draggableId);
+        boardCopy.splice(destination?.index, 0, taskObj);
 
         return {
           ...allBoards, // 수정되지 않는 다른 board 가져오기
@@ -43,9 +44,10 @@ function App() {
       //다른 보드로 이동
       setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]]; //이동전 보드
+        const taskObj = sourceBoard[source.index];
         const destinationBoard = [...allBoards[destination.droppableId]]; //이동후 보드(목적지)
         sourceBoard.splice(source.index, 1); //이동전 보드에서 움직일 아이템의 위치
-        destinationBoard.splice(destination?.index, 0, draggableId); //목적지 보드에서의 위치
+        destinationBoard.splice(destination?.index, 0, taskObj); //목적지 보드에서의 위치
         return {
           ...allBoards,
           [source.droppableId]: sourceBoard,
